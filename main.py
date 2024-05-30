@@ -81,4 +81,4 @@ async def slash2(interaction: discord.Interaction, dice: str=None):
 
 #Chave discord
 aclient.run(
-    'MTI0NTQ2NzAxODMwODc0NzM5OA.GRsr83.f3U5fd3Bu6O8QQm4ApoUfHpuHKAKRJxkOtaQCE')
+    tokendisc)
