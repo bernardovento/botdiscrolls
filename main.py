@@ -57,7 +57,7 @@ client = discord.Client(intents=intents)
 @tree.command(
     guild=discord.Object(id=id_do_servidor),
     name='r',
-    description='Rolando um d2')  #Comando específico para seu servidor
+    description='Comando para rolar dados com aleatoriedade real "/r <quantidade>d<lado>"')  #Comando específico para seu servidor
 async def slash2(interaction: discord.Interaction, dice: str=None):
     if dice == None:
         return
@@ -72,7 +72,7 @@ async def slash2(interaction: discord.Interaction, dice: str=None):
                             headers=headers)
         json_data = json.loads(response.text)
         await interaction.response.send_message(
-            f"Resultado: Rolagem {dice} com resultado {json_data['result']['random']['data']}, com a soma total {sum(json_data['result']['random']['data'])}", ephemeral=True)
+            f"Resultado: Rolagem {dice} com resultado {json_data['result']['random']['data']}, com a soma total {sum(json_data['result']['random']['data'])}")
     except:
         await interaction.response.send_message(
             f"Não entendi a rolagem!", ephemeral=True)
