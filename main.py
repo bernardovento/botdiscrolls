@@ -140,4 +140,41 @@ async def slash2(interaction: discord.Interaction, dice: str=None):
     await interaction.response.send_message(
         f"Rolagem {dice} com resultado:\n{formatted_message}\nCom a soma total {total_result}")
 
+@tree.command(
+    guild=discord.Object(id=id_do_servidor),
+    name='ru',
+    description='Comando para rolar d100 e comparar os níveis de sucesso abaixo de um valor determinado entre 1-100')
+async def slash(interaction: discord.Interaction, input: str=None):
+    import re
+    #regex magic
+    pattern_text = r'(?P<skill>[0-9]+)(?P<command>[A-Za-z]|$)(?P<command_input>[0-9]+|$)'
+    pattern = re.compile(pattern_text)
+    re_match = pattern.match(input)
+    skill = int(re_match.group('skill'))
+    command = re_match.group('command') if re_match.group('command') != '' else 'a'
+    command_input = int(re_match.group('command_input')) if re_match.group('command_input') != '' else 0
+    
+    #true random api
+    data = json.dumps(RawData(command_input + 2, 10))
+    response = requests.post(url='https://api.random.org/json-rpc/2/invoke', data=data, headers=headers)
+    json_data = json.loads(response.text)
+
+    if 'result' not in json_data:
+            print(f"Erro na resposta da API: {json_data}")  # Debug print
+            await interaction.response.send_message("Erro ao acessar a API de rolagem de dados. Por favor, tente novamente.")
+            return
+
+    resultados = json_data['result']['random']['data']
+    print(f"Resultados: {resultados}")  # Debug print
+
+    #CoC mechanics
+    units = resultados[0]
+    tens = min(resultados[1:]) if command == 'b' else max(resultados[1:]) if command == 'p' else resultados[1]
+
+    #result
+    roll = (tens-1)*10 + units
+    success = "*CRITICAL SUCCESS*" if roll == 1 else "EXTREME SUCCESS" if roll <= skill/5 else "HARD SUCCESS" if roll <= skill/2 else "SUCCESS" if roll <= skill else "FAILURE" if roll > skill else "*FUMBLE*" if skill <= 50 and roll >= 96 else "**FUMBLE**"
+    await interaction.response.send_message(
+        f"Rolled a **{roll}** {'under' if roll <= skill else 'over'} **{skill}** resulting in a **{success}**")
+
 aclient.run(tokendisc)
