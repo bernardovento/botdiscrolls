@@ -173,7 +173,7 @@ async def slash(interaction: discord.Interaction, input: str=None):
 
     #result
     roll = (tens-1)*10 + units
-    success = "*CRITICAL SUCCESS*" if roll == 1 else "EXTREME SUCCESS" if roll <= skill/5 else "HARD SUCCESS" if roll <= skill/2 else "SUCCESS" if roll <= skill else "FAILURE" if roll > skill else "*FUMBLE*" if skill <= 50 and roll >= 96 else "**FUMBLE**"
+    success = "*CRITICAL SUCCESS*" if roll == 1 else "EXTREME SUCCESS" if roll <= skill/5 else "HARD SUCCESS" if roll <= skill/2 else "SUCCESS" if roll <= skill else "FAILURE" if roll > skill and roll < 96 else "*FUMBLE*" if skill <= 50 and roll >= 96 else "**FUMBLE**"
     await interaction.response.send_message(
         f"Rolled a **{roll}** {'under' if roll <= skill else 'over'} **{skill}** resulting in a **{success}**")
 
